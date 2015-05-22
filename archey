@@ -98,6 +98,10 @@ logosDict = {'Arch Linux': '''{color[1]}
 \x1b[0m'''
 }
 
+envDict = {
+    'LANG': 'en_US.UTF-8'
+}
+
 processes = str(subprocess.check_output(('ps', '-u', getuser(), '-o', 'comm',
 	'--no-headers')), encoding='utf8').rstrip('\n').split('\n')
 
@@ -129,7 +133,7 @@ class User:
 
 class Hostname:
 	def __init__(self):
-		hostname = Popen(['uname', '-n'], stdout=PIPE).communicate()[0].decode('Utf-8').rstrip('\n')
+		hostname = Popen(['uname', '-n'], stdout=PIPE, env=envDict).communicate()[0].decode('Utf-8').rstrip('\n')
 		self.key = 'Hostname'
 		self.value = hostname
 			
@@ -142,7 +146,7 @@ class Distro:
 			
 class Kernel:
 	def __init__(self):
-		kernel = Popen(['uname', '-r'], stdout=PIPE).communicate()[0].decode('Utf-8').rstrip('\n')
+		kernel = Popen(['uname', '-r'], stdout=PIPE, env=envDict).communicate()[0].decode('Utf-8').rstrip('\n')
 		self.key = 'Kernel'
 		self.value = kernel
 			
@@ -197,7 +201,7 @@ class Terminal:
 			
 class Packages:
 	def __init__(self):
-		p1 = Popen(['pacman', '-Q'], stdout=PIPE).communicate()[0].decode("Utf-8")
+		p1 = Popen(['pacman', '-Q'], stdout=PIPE, env=envDict).communicate()[0].decode("Utf-8")
 		packages = len(p1.rstrip('\n').split('\n'))
 		self.key = 'Packages'
 		self.value = packages
@@ -211,7 +215,7 @@ class CPU:
 
 class RAM:
 	def __init__(self):
-		raminfo = Popen(['free', '-m'], stdout=PIPE).communicate()[0].decode('Utf-8').split('\n')
+		raminfo = Popen(['free', '-m'], stdout=PIPE, env=envDict).communicate()[0].decode('Utf-8').split('\n')
 		ram = ''.join(filter(re.compile('M').search, raminfo)).split()
 		used = ram[2]
 		total = ram[1]
@@ -227,7 +231,7 @@ class RAM:
 			
 class Disk:
     def __init__(self):
-        p1 = Popen(['df', '-Tlh', '-B', 'GB', '--total', '-t', 'ext4', '-t', 'ext3', '-t', 'ext2', '-t', 'reiserfs', '-t', 'jfs', '-t', 'ntfs', '-t', 'fat32', '-t', 'btrfs', '-t', 'fuseblk', '-t', 'xfs'], stdout=PIPE).communicate()[0].decode("Utf-8")
+        p1 = Popen(['df', '-Tlh', '-B', 'GB', '--total', '-t', 'ext4', '-t', 'ext3', '-t', 'ext2', '-t', 'reiserfs', '-t', 'jfs', '-t', 'ntfs', '-t', 'fat32', '-t', 'btrfs', '-t', 'fuseblk', '-t', 'xfs'], stdout=PIPE, env=envDict).communicate()[0].decode("Utf-8")
         total = p1.splitlines()[-1]
         used = total.split()[3]
         size = total.split()[2]
